@@ -9,7 +9,7 @@ public class AutorResumen
 
     public int Libros { get; set; }
 
-    [Ignore] public string Iniciales => Texto.Iniciales(Autor);
+    [Ignore] public string Iniciales => Texto.InicialesNombre(Autor);
 
     [Ignore] public string LibrosTexto => Libros == 1 ? "1 libro" : $"{Libros} libros";
 

@@ -32,4 +32,19 @@ public static class Texto
         var resultado = string.Concat(palabras);
         return resultado.Length > 0 ? resultado : "?";
     }
+
+    /// <summary>"Andrew S. Tanenbaum" → "AT" (primer nombre y último apellido).</summary>
+    public static string InicialesNombre(string? nombre)
+    {
+        var palabras = (nombre ?? string.Empty)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Where(p => !Conectores.Contains(p) && char.IsLetter(p[0]))
+            .ToList();
+        return palabras.Count switch
+        {
+            0 => "?",
+            1 => char.ToUpperInvariant(palabras[0][0]).ToString(),
+            _ => $"{char.ToUpperInvariant(palabras[0][0])}{char.ToUpperInvariant(palabras[^1][0])}"
+        };
+    }
 }

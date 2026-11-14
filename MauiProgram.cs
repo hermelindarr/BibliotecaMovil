@@ -13,6 +13,19 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
+#if WINDOWS
+        // En Windows el título del Picker aparece como etiqueta encima del campo;
+        // se muestra mejor como texto de ayuda dentro del campo.
+        foreach (var propiedad in new[] { nameof(IPicker.Title), nameof(IPicker.TitleColor) })
+        {
+            Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping(propiedad, (handler, picker) =>
+            {
+                handler.PlatformView.PlaceholderText = picker.Title;
+                handler.PlatformView.Header = null;
+            });
+        }
+#endif
+
         // Capa de persistencia (una sola conexión SQLite para toda la app)
         builder.Services.AddSingleton<BibliotecaDatabase>();
 

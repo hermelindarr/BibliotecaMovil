@@ -28,7 +28,7 @@ public class Usuario
 
     [Ignore] public bool EsAdmin => Rol == Roles.Administrador;
 
-    [Ignore] public string Iniciales => Texto.Iniciales(Nombre);
+    [Ignore] public string Iniciales => Texto.InicialesNombre(Nombre);
 
     [Ignore] public Color ColorAvatar => EsAdmin ? Paleta.Secundario : Paleta.Primario;
 
