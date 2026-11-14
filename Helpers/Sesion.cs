@@ -5,7 +5,7 @@ public static class Roles
     public const string Administrador = "Administrador";
     public const string Lector = "Lector";
 
-    public static IReadOnlyList<string> Todos { get; } = [Administrador, Lector];
+    public static IReadOnlyList<string> Todos { get; } = new[] { Administrador, Lector };
 }
 
 /// <summary>Usuario que inició sesión (control de acceso por rol).</summary>

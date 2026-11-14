@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biblioteca Móvil · .NET MAUI 10 | Unidad 3</title>
+  <meta name="description" content="Aplicación de Biblioteca Móvil en .NET MAUI 10 con SQLite, patrón DAO y las 7 actividades de diseño de interfaces multiplataforma. Universidad Tecnológica de San Juan del Río - Jalpan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #dbeafe;
+      --secondary: #0ea5e9;
+      --accent: #8b5cf6;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Header & Nav */
+    header {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.1);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-primary { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding: 4rem 1.5rem 3rem;
+      background: radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 60%);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .hero-badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 780px;
+      margin: 0 auto 2rem;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Summary Bar */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #60a5fa;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+    .section-header {
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Interactive Simulator */
+    .simulator-wrapper {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 2.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 4rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .simulator-wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* Phone Mockup */
+    .phone-mockup {
+      width: 100%;
+      height: 680px;
+      background: #090d16;
+      border-radius: 36px;
+      border: 10px solid #1e293b;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .phone-notch {
+      width: 130px;
+      height: 22px;
+      background: #1e293b;
+      margin: 0 auto;
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      z-index: 50;
+    }
+    .phone-speaker { width: 40px; height: 3px; background: #334155; border-radius: 3px; }
+    .phone-camera { width: 7px; height: 7px; background: #0f172a; border-radius: 50%; }
+
+    .app-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0f172a;
+      color: #f8fafc;
+      position: relative;
+    }
+    .app-topbar {
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.95);
+      z-index: 10;
+    }
+    .app-topbar h3 { font-size: 1rem; font-weight: 700; }
+    .app-topbar .role-pill {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background: #2563eb;
+      font-weight: 600;
+    }
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      scroll-behavior: smooth;
+    }
+    .app-content::-webkit-scrollbar { width: 4px; }
+    .app-content::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+    /* App Bottom Tabs */
+    .app-tabs {
+      height: 56px;
+      background: #0b1120;
+      border-top: 1px solid #1e293b;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 20;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      gap: 3px;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { color: #3b82f6; }
+    .tab-btn span.tab-icon { font-size: 1.15rem; }
+
+    /* Simulator App Screens */
+    /* Login Page */
+    .screen-login {
+      height: 100%;
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-circle1 {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .login-circle2 {
+      position: absolute;
+      bottom: -40px;
+      left: -40px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .login-logo {
+      width: 68px;
+      height: 68px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 2.2rem;
+      margin: 0 auto 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .login-box {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+    .input-group { margin-bottom: 0.9rem; }
+    .input-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 0.3rem;
+    }
+    .app-input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      color: white;
+      font-size: 0.88rem;
+      font-family: inherit;
+    }
+    .app-input:focus { outline: none; border-color: #3b82f6; }
+    .quick-users {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .btn-quick {
+      flex: 1;
+      padding: 0.4rem;
+      font-size: 0.72rem;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-quick:hover { background: #334155; color: white; }
+
+    /* Inicio Dashboard */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .metric-card {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 0.65rem 0.5rem;
+      text-align: center;
+      border: 1px solid #334155;
+    }
+    .metric-val { font-size: 1.35rem; font-weight: 700; color: #3b82f6; }
+    .metric-title { font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; }
+
+    /* Mosaico Custom Layout Simulation */
+    .mosaic-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+    .mosaic-featured {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .mosaic-featured h4 { font-size: 1rem; margin-bottom: 2px; }
+    .mosaic-featured p { font-size: 0.72rem; opacity: 0.9; }
+    .mosaic-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .mosaic-cell {
+      border-radius: 10px;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 80px;
+      cursor: pointer;
+    }
+    .cell-green { background: linear-gradient(135deg, #10b981, #059669); }
+    .cell-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .cell-amber { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+    /* Catalogo & Flex Chips */
+    .search-box {
+      margin-bottom: 0.75rem;
+    }
+    .chips-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 0.9rem;
+    }
+    .chip {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+    .chip.active {
+      background: #2563eb;
+      color: white;
+      border-color: #2563eb;
+      font-weight: 600;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .book-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+    .book-badge-new {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #f59e0b;
+      color: black;
+      font-weight: 800;
+      font-size: 0.62rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      z-index: 2;
+    }
+    .book-badge-disp {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 0.62rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      z-index: 2;
+    }
+    .badge-disp-si { background: rgba(16, 185, 129, 0.85); color: white; }
+    .badge-disp-no { background: rgba(239, 68, 68, 0.85); color: white; }
+
+    .book-cover {
+      height: 90px;
+      background: linear-gradient(135deg, #1e3a8a, #0f172a);
+      display: grid;
+      place-items: center;
+      font-size: 2.2rem;
+    }
+    .book-info { padding: 0.55rem; }
+    .book-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .book-author { font-size: 0.7rem; color: #94a3b8; }
+    .book-cat {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.65rem;
+      color: #60a5fa;
+    }
+
+    /* Modal Form for Books */
+    .sim-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      display: none;
+      flex-direction: column;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .sim-modal.open { display: flex; }
+
+    /* Simulator Controls panel */
+    .sim-panel h3 { font-size: 1.4rem; margin-bottom: 0.75rem; }
+    .sim-panel p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .guide-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.2rem;
+    }
+    .guide-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      color: #60a5fa;
+      margin-bottom: 0.5rem;
+    }
+    .code-pill {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      background: #0f172a;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+
+    /* 7 Activities Grid */
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .activity-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .activity-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+    .act-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .act-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+    }
+    .act-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .act-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; flex: 1; }
+    .act-meta {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+    .code-block {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      max-height: 180px;
+    }
+
+    /* Persistence Section */
+    .persistence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .feature-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .feature-box h4 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+    .feature-box p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Verification Checklist Table */
+    .check-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+    .check-table th, .check-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .check-table th {
+      background: #0f172a;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+    .check-table tr:last-child td { border-bottom: none; }
+    .badge-check {
+      color: #10b981;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Footer */
+    footer {
+      background: #090d16;
+      border-top: 1px solid var(--card-border);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    footer p { margin-bottom: 0.5rem; }
+    footer a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">📖</div>
+        <span>Biblioteca Móvil</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#simulador">Simulador</a></li>
+        <li><a href="#actividades">7 Actividades</a></li>
+        <li><a href="#persistencia">Persistencia SQLite</a></li>
+        <li><a href="#ejecucion">Ejecución</a></li>
+      </ul>
+      <div style="display:flex; gap:0.5rem;">
+        <a href="https://github.com/hermelindarr/BibliotecaMovil" target="_blank" class="btn btn-outline">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <a href="https://github.com/hermelindarr/BibliotecaMovil/archive/refs/heads/main.zip" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Descargar ZIP
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-badges">
+        <span class="badge badge-primary">.NET MAUI 10</span>
+        <span class="badge badge-success">Persistencia SQLite + DAO</span>
+        <span class="badge badge-warning">7 Actividades de Diseño</span>
+        <span class="badge badge-primary">UTSJR Jalpan</span>
+      </div>
+      <h1>Biblioteca Móvil Multiplataforma</h1>
+      <p>
+        Solución completa en C# con arquitectura limpia en capas, base de datos local SQLite, 
+        control de acceso por roles y la implementación práctica de los 7 contenedores de diseño (.NET MAUI Layouts).
+      </p>
+      <div class="hero-actions">
+        <a href="#simulador" class="btn btn-primary" style="padding:0.75rem 1.75rem; font-size:1rem;">
+          Probar Simulador Interactivo
+        </a>
+        <a href="#actividades" class="btn btn-outline" style="padding:0.75rem 1.75rem; font-size:1rem;">
+          Explorar las 7 Actividades
+        </a>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">7 / 7</div>
+          <div class="stat-label">Layouts Implementados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Persistencia Local SQLite</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">13</div>
+          <div class="stat-label">Libros Sembrados</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Roles: Admin / Lector</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Simulator Section -->
+  <section id="simulador" class="container">
+    <div class="section-header">
+      <span class="badge badge-primary" style="margin-bottom:0.5rem;">Laboratorio Interactivo</span>
+      <h2 class="section-title">Simulador Web de la App Biblioteca Móvil</h2>
+      <p class="section-subtitle">
+        Interactúa en tiempo real con la réplica exacta de la interfaz y la lógica de negocio construida en .NET MAUI 10.
+      </p>
+    </div>
+
+    <div class="simulator-wrapper">
+      <!-- Phone Mockup Frame -->
+      <div class="phone-mockup">
+        <div class="phone-notch">
+          <div class="phone-speaker"></div>
+          <div class="phone-camera"></div>
+        </div>
+
+        <div class="app-screen">
+          <!-- Top Bar -->
+          <div class="app-topbar">
+            <div>
+              <h3 id="app-title">Biblioteca Móvil</h3>
+              <small id="app-user-label" style="color:#94a3b8; font-size:0.68rem;">Sesión: admin</small>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span id="role-badge" class="role-pill">Administrador</span>
+              <button onclick="cerrarSesionApp()" style="background:#334155; border:none; color:white; border-radius:4px; font-size:0.65rem; padding:2px 6px; cursor:pointer;">Salir</button>
+            </div>
+          </div>
+
+          <!-- App Screen Body -->
+          <div class="app-content" id="app-body">
+            <!-- Will be dynamically populated by JS -->
+          </div>
+
+          <!-- App Bottom Tabs -->
+          <nav class="app-tabs" id="app-tabs">
+            <button class="tab-btn active" onclick="cambiarPestana('inicio')">
+              <span class="tab-icon">🏠</span>
+              <span>Inicio</span>
+            </button>
+            <button class="tab-btn" onclick="cambiarPestana('catalogo')">
+              <span class="tab-icon">📚</span>
+              <span>Catálogo</span>
+            </button>
+            <button class="tab-btn" onclick="cambiarPestana('prestamos')">
+              <span class="tab-icon">⇄</span>
+              <span>Préstamos</span>
+            </button>
+            <button class="tab-btn" onclick="cambiarPestana('usuarios')">
+              <span class="tab-icon">👥</span>
+              <span>Usuarios</span>
+            </button>
+          </nav>
+
+          <!-- Book Form Modal (Grid Layout simulation) -->
+          <div class="sim-modal" id="book-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h4 id="modal-title" style="font-size:1.1rem; color:#60a5fa;">Nuevo Libro</h4>
+              <button onclick="cerrarModalLibro()" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <p style="font-size:0.75rem; color:#94a3b8; margin-bottom:1rem;">
+              Diseñado con <strong>Grid (ColumnDefinitions="Auto,*")</strong>
+            </p>
+            <form id="form-libro" onsubmit="guardarLibro(event)">
+              <input type="hidden" id="libro-id" value="0" />
+              <div class="input-group">
+                <label>Título del libro *</label>
+                <input type="text" id="libro-titulo" class="app-input" required placeholder="Ej. Clean Code" />
+              </div>
+              <div class="input-group">
+                <label>Autor *</label>
+                <input type="text" id="libro-autor" class="app-input" required placeholder="Ej. Robert C. Martin" />
+              </div>
+              <div class="input-group">
+                <label>Categoría</label>
+                <select id="libro-categoria" class="app-input">
+                  <option value="Programación">Programación</option>
+                  <option value="Bases de Datos">Bases de Datos</option>
+                  <option value="Redes">Redes</option>
+                  <option value="Tecnología">Tecnología</option>
+                  <option value="Ciencia">Ciencia</option>
+                  <option value="Novela">Novela</option>
+                  <option value="Historia">Historia</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label>Año de publicación</label>
+                <input type="number" id="libro-anio" class="app-input" value="2024" min="1900" max="2026" />
+              </div>
+              <div style="display:flex; gap:0.5rem; margin-top:1.5rem;">
+                <button type="button" onclick="cerrarModalLibro()" class="btn btn-outline" style="flex:1; justify-content:center;">Cancelar</button>
+                <button type="submit" class="btn btn-primary" style="flex:1; justify-content:center;">Guardar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Loan Form Modal -->
+          <div class="sim-modal" id="loan-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h4 style="font-size:1.1rem; color:#10b981;">Registrar Préstamo</h4>
+              <button onclick="cerrarModalPrestamo()" style="background:none; border:none; color:#94a3b8; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <form onsubmit="guardarPrestamo(event)">
+              <div class="input-group">
+                <label>Libro disponible *</label>
+                <select id="prestamo-libro" class="app-input" required></select>
+              </div>
+              <div class="input-group">
+                <label>Usuario / Lector *</label>
+                <select id="prestamo-usuario" class="app-input" required></select>
+              </div>
+              <div class="input-group">
+                <label>Plazo del préstamo (días)</label>
+                <input type="number" id="prestamo-dias" class="app-input" value="7" min="1" max="30" />
+              </div>
+              <div style="display:flex; gap:0.5rem; margin-top:1.5rem;">
+                <button type="button" onclick="cerrarModalPrestamo()" class="btn btn-outline" style="flex:1; justify-content:center;">Cancelar</button>
+                <button type="submit" class="btn btn-primary" style="flex:1; justify-content:center;">Prestar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls and Educational Guide Panel -->
+      <div class="sim-panel">
+        <h3>Explorador en Vivo de la Aplicación</h3>
+        <p>
+          Usa los controles del teléfono para probar el catálogo, buscar libros, filtrar por categorías y gestionar préstamos.
+        </p>
+
+        <div class="guide-card">
+          <h4>
+            <span style="font-size:1.2rem;">⚡</span> Cuentas de Acceso Rápido
+          </h4>
+          <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:0.75rem;">
+            Prueba cómo la interfaz se adapta dinámicamente según el rol del usuario:
+          </p>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button onclick="iniciarSesionComo('admin')" class="btn btn-primary" style="font-size:0.8rem; padding:0.4rem 0.8rem;">
+              👤 Iniciar como Admin
+            </button>
+            <button onclick="iniciarSesionComo('alumno')" class="btn btn-outline" style="font-size:0.8rem; padding:0.4rem 0.8rem;">
+              🎓 Iniciar como Alumno
+            </button>
+          </div>
+        </div>
+
+        <div class="guide-card">
+          <h4>
+            <span style="font-size:1.2rem;">📐</span> Layout activo en pantalla
+          </h4>
+          <div id="layout-inspector" style="font-size:0.85rem; color:#cbd5e1;">
+            Selecciona una pestaña para ver el contenedor .NET MAUI en uso.
+          </div>
+        </div>
+
+        <div class="guide-card">
+          <h4>
+            <span style="font-size:1.2rem;">💾</span> Estado de Persistencia SQLite
+          </h4>
+          <div style="font-size:0.82rem; color:#cbd5e1; line-height:1.6;">
+            <div>• Archivo: <span class="code-pill">biblioteca.db3</span></div>
+            <div>• Tabla <span class="code-pill">Libros</span>: <strong id="db-libros-count">13</strong> registros</div>
+            <div>• Tabla <span class="code-pill">Usuarios</span>: <strong id="db-usuarios-count">3</strong> usuarios</div>
+            <div>• Tabla <span class="code-pill">Prestamos</span>: <strong id="db-prestamos-count">3</strong> registros</div>
+            <div>• Índice: <span class="code-pill">idx_prestamos_activos</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 Design Activities Section -->
+  <section id="actividades" class="container">
+    <div class="section-header">
+      <span class="badge badge-warning" style="margin-bottom:0.5rem;">Unidad 3 · Diseño de Interfaces Multiplataforma</span>
+      <h2 class="section-title">Las 7 Actividades de Diseño en .NET MAUI 10</h2>
+      <p class="section-subtitle">
+        Implementación detallada de cada contenedor de diseño según la guía oficial y el laboratorio práctico de 60 minutos.
+      </p>
+    </div>
+
+    <div class="activities-grid">
+      <!-- Actividad 1 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">1</div>
+          <span class="badge badge-primary">Linear Vertical</span>
+        </div>
+        <h3 class="act-title">StackLayout & VerticalStackLayout</h3>
+        <p class="act-desc">
+          Organiza los controles en una sola dirección vertical. Ideal para formularios, pantallas de inicio de sesión y secuencias lineales.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Views/LoginPage.xaml</code> (Logo, título, inputs de usuario y contraseña, y botón de inicio).
+        </div>
+        <pre class="code-block">&lt;VerticalStackLayout Spacing="12" Padding="20"&gt;
+    &lt;Label Text="Usuario" /&gt;
+    &lt;Entry Placeholder="admin" /&gt;
+    &lt;Label Text="Contraseña" /&gt;
+    &lt;Entry IsPassword="True" /&gt;
+    &lt;Button Text="Iniciar sesión" /&gt;
+&lt;/VerticalStackLayout&gt;</pre>
+      </div>
+
+      <!-- Actividad 2 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">2</div>
+          <span class="badge badge-primary">Linear Horizontal</span>
+        </div>
+        <h3 class="act-title">HorizontalStackLayout</h3>
+        <p class="act-desc">
+          Distribuye los controles en una sola fila horizontal con espaciado constante. Perfecto para barras de acciones y botones con iconos.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Views/CatalogoPage.xaml</code> (Barra de botones "+ Nuevo libro", "Lista/Cuadrícula" y contador).
+        </div>
+        <pre class="code-block">&lt;HorizontalStackLayout Spacing="10"&gt;
+    &lt;Button Text="+ Nuevo libro" Style="{StaticResource BtnExito}" /&gt;
+    &lt;Button Text="Lista" Style="{StaticResource BtnContorno}" /&gt;
+    &lt;Label Text="13 libros" VerticalOptions="Center" /&gt;
+&lt;/HorizontalStackLayout&gt;</pre>
+      </div>
+
+      <!-- Actividad 3 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">3</div>
+          <span class="badge badge-primary">Cuadrícula Flexible</span>
+        </div>
+        <h3 class="act-title">Grid</h3>
+        <p class="act-desc">
+          El contenedor más potente: organiza elementos en filas y columnas proporcionales (*), automáticas (Auto) o de tamaño fijo.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Views/LibroFormPage.xaml</code> y resumen de inicio <code>ColumnDefinitions="*,*,*"</code>.
+        </div>
+        <pre class="code-block">&lt;Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="Auto,*" ColumnSpacing="12"&gt;
+    &lt;Label Text="Título:" Grid.Row="0" Grid.Column="0" /&gt;
+    &lt;Entry Grid.Row="0" Grid.Column="1" /&gt;
+    &lt;Label Text="Autor:" Grid.Row="1" Grid.Column="0" /&gt;
+    &lt;Entry Grid.Row="1" Grid.Column="1" /&gt;
+&lt;/Grid&gt;</pre>
+      </div>
+
+      <!-- Actividad 4 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">4</div>
+          <span class="badge badge-primary">Flujo & Envoltura</span>
+        </div>
+        <h3 class="act-title">FlexLayout</h3>
+        <p class="act-desc">
+          Distribuye controles con soporte para salto de línea (Wrap="Wrap"), alineación flexible y distribución de espacio sobrante.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Views/CatalogoPage.xaml</code> (Chips de categorías adaptables a cualquier ancho de pantalla).
+        </div>
+        <pre class="code-block">&lt;FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start" AlignItems="Center"&gt;
+    &lt;!-- Chips generados dinámicamente --&gt;
+    &lt;Border Style="{StaticResource Chip}"&gt;
+        &lt;Label Text="Programación" /&gt;
+    &lt;/Border&gt;
+&lt;/FlexLayout&gt;</pre>
+      </div>
+
+      <!-- Actividad 5 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">5</div>
+          <span class="badge badge-primary">Posicionamiento Libre</span>
+        </div>
+        <h3 class="act-title">AbsoluteLayout</h3>
+        <p class="act-desc">
+          Posicionamiento libre exacto o proporcional mediante coordenadas (X, Y, Ancho, Alto) y superposición visual de capas.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Views/LoginPage.xaml</code> (fondo con gradiente y formas) y portada con insignias "Nuevo" y "Disponible".
+        </div>
+        <pre class="code-block">&lt;AbsoluteLayout&gt;
+    &lt;Image Source="portada.png" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" /&gt;
+    &lt;Label Text="NUEVO" AbsoluteLayout.LayoutBounds="8,8,60,24" BackgroundColor="Orange" /&gt;
+&lt;/AbsoluteLayout&gt;</pre>
+      </div>
+
+      <!-- Actividad 6 -->
+      <div class="activity-card">
+        <div class="act-header">
+          <div class="act-number">6</div>
+          <span class="badge badge-primary">Colecciones Dinámicas</span>
+        </div>
+        <h3 class="act-title">BindableLayout</h3>
+        <p class="act-desc">
+          Genera controles a partir de una colección sin la sobrecarga de un CollectionView. Recomendado para listas pequeñas y chips.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> Generación de categorías en <code>CatalogoPage.xaml</code> y autores destacados en <code>InicioPage.xaml</code>.
+        </div>
+        <pre class="code-block">&lt;FlexLayout BindableLayout.ItemsSource="{Binding Categorias}"&gt;
+    &lt;BindableLayout.ItemTemplate&gt;
+        &lt;DataTemplate&gt;
+            &lt;Border Style="{StaticResource Chip}"&gt;
+                &lt;Label Text="{Binding Nombre}" /&gt;
+            &lt;/Border&gt;
+        &lt;/DataTemplate&gt;
+    &lt;/BindableLayout.ItemTemplate&gt;
+&lt;/FlexLayout&gt;</pre>
+      </div>
+
+      <!-- Actividad 7 -->
+      <div class="activity-card" style="grid-column: 1 / -1;">
+        <div class="act-header">
+          <div class="act-number">7</div>
+          <span class="badge badge-success">Diseño Personalizado + Estilos</span>
+        </div>
+        <h3 class="act-title">Custom Layout: MosaicoLayout & Estilos Globales</h3>
+        <p class="act-desc">
+          Creación de un layout propio en C# heredando de <code>Layout</code> e implementando <code>ILayoutManager</code> con algoritmos propios de <code>Measure</code> y <code>ArrangeChildren</code>. Alterna celdas destacadas a lo ancho con celdas compactas. Además, recursos centralizados en <code>Colors.xaml</code> y <code>Styles.xaml</code>.
+        </p>
+        <div class="act-meta">
+          <strong>Uso en la app:</strong> <code>Controls/MosaicoLayout.cs</code> para los accesos rápidos de <code>InicioPage.xaml</code>.
+        </div>
+        <pre class="code-block">public class MosaicoLayout : Layout {
+    protected override ILayoutManager CreateLayoutManager() => new MosaicoLayoutManager(this);
+}
+public class MosaicoLayoutManager(MosaicoLayout layout) : ILayoutManager {
+    public Size Measure(double widthConstraint, double heightConstraint) { /* calcula alto dinámico */ }
+    public Size ArrangeChildren(Rect bounds) { /* posiciona celdas destacadas y secundarias */ }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Persistence & Architecture Section -->
+  <section id="persistencia" class="container">
+    <div class="section-header">
+      <span class="badge badge-success" style="margin-bottom:0.5rem;">Persistencia y Acceso a Datos</span>
+      <h2 class="section-title">Arquitectura de Datos y Patrón DAO</h2>
+      <p class="section-subtitle">
+        Diseño robusto con SQLite local, ORM sqlite-net-pcl, consultas optimizadas y control de transacciones.
+      </p>
+    </div>
+
+    <div class="persistence-grid">
+      <div class="feature-box">
+        <div class="feature-icon">🗄️</div>
+        <h4>Base de Datos SQLite</h4>
+        <p>
+          Archivo <code>biblioteca.db3</code> ubicado en el almacenamiento privado de la app. 
+          Incluye tablas para Libros, Usuarios y Préstamos con claves primarias autoincrementales y foráneas.
+        </p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">🧩</div>
+        <h4>Patrón DAO</h4>
+        <p>
+          Desacoplamiento total mediante interfaces (<code>ILibroDAO</code>, <code>IPrestamoDAO</code>, <code>IUsuarioDAO</code>). 
+          Las vistas no interactúan con SQLite, solo con los contratos DAO inyectados por DI.
+        </p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">⚡</div>
+        <h4>Consultas Optimizadas</h4>
+        <p>
+          Uso de <code>CREATE INDEX idx_prestamos_activos</code> en <code>(FechaDevolucion, FechaLimite)</code>, 
+          consultas parametrizadas anti-SQLi y proyecciones selectivas de columnas.
+        </p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">🔐</div>
+        <h4>Seguridad y Transacciones</h4>
+        <p>
+          Contraseñas protegidas mediante PBKDF2-SHA256 con sal criptográfica aleatoria. 
+          Operaciones de préstamo y devolución ejecutadas bajo transacciones atómicas (<code>RunInTransactionAsync</code>).
+        </p>
+      </div>
+    </div>
+
+    <!-- Verification Table -->
+    <div class="guide-card">
+      <h3 style="font-size:1.3rem; margin-bottom:1rem;">Matriz de Cumplimiento de Requerimientos</h3>
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>Requerimiento Solicitado</th>
+            <th>Componente / Archivo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Base de datos local SQLite con CRUD completo</td>
+            <td><code>Data/BibliotecaDatabase.cs</code>, <code>Data/LibroDAO.cs</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Patrón DAO con interfaces</td>
+            <td><code>Data/Interfaces.cs</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Gestión de préstamos y disponibilidad</td>
+            <td><code>Data/PrestamoDAO.cs</code>, <code>Views/PrestamosPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Autenticación y roles (Admin / Lector)</td>
+            <td><code>Helpers/Sesion.cs</code>, <code>Data/UsuarioDAO.cs</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 1: VerticalStackLayout</td>
+            <td><code>Views/LoginPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 2: HorizontalStackLayout</td>
+            <td><code>Views/CatalogoPage.xaml</code>, <code>Views/LibroFormPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 3: Grid (filas/columnas y spans)</td>
+            <td><code>Views/LibroFormPage.xaml</code>, <code>Views/InicioPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 4: FlexLayout con Wrap</td>
+            <td><code>Views/CatalogoPage.xaml</code> (chips de categorías)</td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 5: AbsoluteLayout (capas e insignias)</td>
+            <td><code>Views/LoginPage.xaml</code>, <code>Views/CatalogoPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 6: BindableLayout</td>
+            <td><code>Views/CatalogoPage.xaml</code>, <code>Views/InicioPage.xaml</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Actividad 7: Diseño personalizado (Custom Layout)</td>
+            <td><code>Controls/MosaicoLayout.cs</code> + <code>Resources/Styles</code></td>
+            <td><span class="badge-check">✓ Cumplido</span></td>
+          </tr>
+          <tr>
+            <td>Publicación en GitHub Pages</td>
+            <td><code>index.html</code>, <code>docs/index.html</code>, <code>.nojekyll</code></td>
+            <td><span class="badge-check">✓ Solucionado</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Execution Guide Section -->
+  <section id="ejecucion" class="container">
+    <div class="section-header">
+      <span class="badge badge-primary" style="margin-bottom:0.5rem;">Guía de Desarrollo</span>
+      <h2 class="section-title">Cómo Ejecutar la Aplicación .NET MAUI</h2>
+      <p class="section-subtitle">
+        Instrucciones paso a paso para compilar y ejecutar el proyecto en Windows o en el emulador de Android.
+      </p>
+    </div>
+
+    <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; padding:2rem; max-width:900px; margin:0 auto;">
+      <ol style="margin-left:1.5rem; line-height:2; color:#cbd5e1;">
+        <li>Clona el repositorio o descarga el archivo ZIP:
+          <pre class="code-block" style="margin:0.5rem 0 1rem;">git clone https://github.com/hermelindarr/BibliotecaMovil.git</pre>
+        </li>
+        <li>Abre la carpeta en <strong>Visual Studio 2026</strong> (o Visual Studio 2022 v17.10+) con la carga de trabajo <em>.NET Multi-platform App UI development</em>.</li>
+        <li>Selecciona como proyecto de inicio <code>BibliotecaMovil.csproj</code>.</li>
+        <li>Elige tu destino de depuración: <strong>Windows Machine</strong> o un <strong>Emulador Android</strong> (Pixel / API 34).</li>
+        <li>Presiona <kbd style="background:#0f172a; padding:2px 6px; border-radius:4px; border:1px solid #334155;">F5</kbd> para compilar y ejecutar.</li>
+      </ol>
+
+      <div style="margin-top:2rem; padding:1.25rem; background:#0f172a; border-radius:10px; border-left:4px solid var(--primary);">
+        <strong style="color:white;">Cuentas preconfiguradas para pruebas:</strong>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-top:0.75rem; font-size:0.88rem;">
+          <div>• <strong>Administrador:</strong> <code>admin</code> / <code>admin123</code></div>
+          <div>• <strong>Lector / Alumno:</strong> <code>alumno</code> / <code>alumno123</code></div>
+          <div>• <strong>Lector 2:</strong> <code>mrojas</code> / <code>lector123</code></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width:1200px; margin:0 auto;">
+      <p><strong>Biblioteca Móvil</strong> · Unidad 3: Persistencia y Acceso a Datos & Diseño de Interfaces</p>
+      <p>Universidad Tecnológica de San Juan del Río (UTSJR) · Unidad Académica Jalpan</p>
+      <p style="margin-top:1rem; font-size:0.8rem; color:#64748b;">
+        Código alojado en <a href="https://github.com/hermelindarr/BibliotecaMovil" target="_blank">GitHub: hermelindarr/BibliotecaMovil</a> · Desplegado vía GitHub Pages
+      </p>
+    </div>
+  </footer>
+
+  <!-- App Simulation Logic in Vanilla JavaScript -->
+  <script>
+    // State simulating SQLite database
+    const db = {
+      currentUser: { id: 1, nombre: 'Administrador', usuario: 'admin', rol: 'Administrador', email: 'admin@biblioteca.mx' },
+      usuarios: [
+        { id: 1, nombre: 'Administrador', usuario: 'admin', rol: 'Administrador', email: 'admin@biblioteca.mx' },
+        { id: 2, nombre: 'Ana Torres', usuario: 'alumno', rol: 'Lector', email: 'ana.torres@biblioteca.mx' },
+        { id: 3, nombre: 'Miguel Rojas', usuario: 'mrojas', rol: 'Lector', email: 'miguel.rojas@biblioteca.mx' }
+      ],
+      libros: [
+        { id: 1, titulo: "C# 12 in a Nutshell", autor: "Joseph Albahari", categoria: "Programación", anio: 2023, disponible: true, nuevo: true },
+        { id: 2, titulo: "Código limpio", autor: "Robert C. Martin", categoria: "Programación", anio: 2012, disponible: true, nuevo: false },
+        { id: 3, titulo: "Fundamentos de Bases de Datos", autor: "Abraham Silberschatz", categoria: "Bases de Datos", anio: 2014, disponible: true, nuevo: false },
+        { id: 4, titulo: "Introducción a Sistemas de BD", autor: "C. J. Date", categoria: "Bases de Datos", anio: 2001, disponible: true, nuevo: false },
+        { id: 5, titulo: "Redes de Computadoras", autor: "Andrew S. Tanenbaum", categoria: "Redes", anio: 2012, disponible: true, nuevo: false },
+        { id: 6, titulo: "Sistemas Operativos Modernos", autor: "Andrew S. Tanenbaum", categoria: "Tecnología", anio: 2015, disponible: false, nuevo: false },
+        { id: 7, titulo: "Organización de Computadoras", autor: "Andrew S. Tanenbaum", categoria: "Tecnología", anio: 2000, disponible: true, nuevo: false },
+        { id: 8, titulo: "Scrum: El arte de hacer el doble", autor: "Jeff Sutherland", categoria: "Tecnología", anio: 2014, disponible: true, nuevo: false },
+        { id: 9, titulo: "Breve historia del tiempo", autor: "Stephen Hawking", categoria: "Ciencia", anio: 1988, disponible: true, nuevo: false },
+        { id: 10, titulo: "Física Universitaria", autor: "Sears y Zemansky", categoria: "Ciencia", anio: 2018, disponible: true, nuevo: false },
+        { id: 11, titulo: "Cien años de soledad", autor: "Gabriel García Márquez", categoria: "Novela", anio: 1967, disponible: true, nuevo: false },
+        { id: 12, titulo: "El principito", autor: "Antoine de Saint-Exupéry", categoria: "Novela", anio: 1943, disponible: true, nuevo: true },
+        { id: 13, titulo: "Sapiens", autor: "Yuval Noah Harari", categoria: "Historia", anio: 2011, disponible: false, nuevo: false }
+      ],
+      prestamos: [
+        { id: 1, idLibro: 6, idUsuario: 2, fechaPrestamo: '2026-11-10', fechaLimite: '2026-11-17', fechaDevolucion: null },
+        { id: 2, idLibro: 13, idUsuario: 3, fechaPrestamo: '2026-11-01', fechaLimite: '2026-11-08', fechaDevolucion: null },
+        { id: 3, idLibro: 11, idUsuario: 2, fechaPrestamo: '2026-10-15', fechaLimite: '2026-10-22', fechaDevolucion: '2026-10-20' }
+      ]
+    };
+
+    let pestanaActual = 'inicio';
+    let filtroCategoriaActual = 'Todos';
+    let busquedaActual = '';
+
+    const categorias = ['Todos', 'Programación', 'Bases de Datos', 'Redes', 'Tecnología', 'Ciencia', 'Novela', 'Historia'];
+
+    function actualizarContadoresBD() {
+      document.getElementById('db-libros-count').textContent = db.libros.length;
+      document.getElementById('db-usuarios-count').textContent = db.usuarios.length;
+      document.getElementById('db-prestamos-count').textContent = db.prestamos.length;
+    }
+
+    function cambiarPestana(pestana) {
+      pestanaActual = pestana;
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        const tabs = ['inicio', 'catalogo', 'prestamos', 'usuarios'];
+        b.classList.toggle('active', tabs[i] === pestana);
+      });
+
+      const body = document.getElementById('app-body');
+      const inspector = document.getElementById('layout-inspector');
+      const appTitle = document.getElementById('app-title');
+
+      if (pestana === 'inicio') {
+        appTitle.textContent = 'Biblioteca Móvil';
+        inspector.innerHTML = `
+          <strong>Contenedores en pantalla Inicio:</strong><br>
+          • <code>Grid</code> (ColumnDefinitions="*,*,*") para métricas.<br>
+          • <code>MosaicoLayout</code> (Actividad 7 - Custom Layout) para accesos rápidos.<br>
+          • <code>BindableLayout</code> para libros recientes y autores.
+        `;
+        renderInicio(body);
+      } else if (pestana === 'catalogo') {
+        appTitle.textContent = 'Catálogo de Libros';
+        inspector.innerHTML = `
+          <strong>Contenedores en Catálogo:</strong><br>
+          • <code>Grid</code> (RowDefinitions="Auto,Auto,Auto,*") para la estructura general.<br>
+          • <code>HorizontalStackLayout</code> para la barra de acciones (+ Nuevo, Vista).<br>
+          • <code>FlexLayout</code> (Wrap="Wrap") para los chips de categorías.<br>
+          • <code>AbsoluteLayout</code> para las insignias superpuestas sobre portadas.
+        `;
+        renderCatalogo(body);
+      } else if (pestana === 'prestamos') {
+        appTitle.textContent = 'Gestión de Préstamos';
+        inspector.innerHTML = `
+          <strong>Contenedores en Préstamos:</strong><br>
+          • <code>HorizontalStackLayout</code> para los botones de pestañas y plazos.<br>
+          • <code>Grid</code> para el resumen de préstamos activos y vencidos.<br>
+          • Consultas SQLite con índice compuesto <code>idx_prestamos_activos</code>.
+        `;
+        renderPrestamos(body);
+      } else if (pestana === 'usuarios') {
+        appTitle.textContent = 'Gestión de Usuarios';
+        inspector.innerHTML = `
+          <strong>Contenedores en Usuarios:</strong><br>
+          • <code>VerticalStackLayout</code> y <code>Border</code> para las tarjetas de usuarios.<br>
+          • Hashing PBKDF2-SHA256 y roles diferenciados (Administrador / Lector).
+        `;
+        renderUsuarios(body);
+      }
+    }
+
+    function renderInicio(container) {
+      const total = db.libros.length;
+      const disp = db.libros.filter(l => l.disponible).length;
+      const prest = total - disp;
+
+      container.innerHTML = `
+        <div style="margin-bottom:1rem;">
+          <p style="font-size:0.75rem; color:#94a3b8;">Hola, ${db.currentUser.nombre}</p>
+          <h2 style="font-size:1.15rem; font-weight:700;">¿Qué quieres hacer hoy?</h2>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="metric-row">
+          <div class="metric-card">
+            <div class="metric-val">${total}</div>
+            <div class="metric-title">Libros</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:#10b981;">${disp}</div>
+            <div class="metric-title">Disponibles</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color:#f59e0b;">${prest}</div>
+            <div class="metric-title">Prestados</div>
+          </div>
+        </div>
+
+        <!-- Custom MosaicoLayout -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <h4 style="font-size:0.82rem; color:#94a3b8; text-transform:uppercase;">Accesos Rápidos (MosaicoLayout)</h4>
+        </div>
+
+        <div class="mosaic-layout">
+          <div class="mosaic-featured" onclick="cambiarPestana('catalogo')">
+            <div>
+              <h4>Catálogo de Libros</h4>
+              <p>Explora y filtra por categoría</p>
+            </div>
+            <div style="font-size:2rem;">📚</div>
+          </div>
+          <div class="mosaic-row">
+            <div class="mosaic-cell cell-green" onclick="${db.currentUser.rol === 'Administrador' ? 'abrirModalLibro()' : 'alert(\'Solo los administradores pueden registrar libros\')'}">
+              <span style="font-size:1.4rem;">+</span>
+              <strong style="font-size:0.85rem;">Registrar Libro</strong>
+            </div>
+            <div class="mosaic-cell cell-purple" onclick="cambiarPestana('prestamos')">
+              <span style="font-size:1.4rem;">⇄</span>
+              <strong style="font-size:0.85rem;">Préstamos</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Libros Recientes -->
+        <div style="margin-top:1.2rem;">
+          <h4 style="font-size:0.82rem; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">Libros Recientes</h4>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${db.libros.slice(-3).reverse().map(l => `
+              <div style="background:#1e293b; padding:8px 10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #334155;">
+                <div>
+                  <strong style="font-size:0.8rem; display:block;">${l.titulo}</strong>
+                  <span style="font-size:0.7rem; color:#94a3b8;">${l.autor} • ${l.categoria}</span>
+                </div>
+                <span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:600; ${l.disponible ? 'background:#064e3b; color:#34d399;' : 'background:#7f1d1d; color:#f87171;'}">
+                  ${l.disponible ? 'Disponible' : 'Prestado'}
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCatalogo(container) {
+      const librosFiltrados = db.libros.filter(l => {
+        const coincideCat = filtroCategoriaActual === 'Todos' || l.categoria === filtroCategoriaActual;
+        const coincideTexto = l.titulo.toLowerCase().includes(busquedaActual.toLowerCase()) ||
+                              l.autor.toLowerCase().includes(busquedaActual.toLowerCase());
+        return coincideCat && coincideTexto;
+      });
+
+      container.innerHTML = `
+        <!-- Search Bar -->
+        <div class="search-box">
+          <input type="text" class="app-input" placeholder="🔍 Buscar por título o autor..." 
+                 value="${busquedaActual}" oninput="filtrarBusqueda(this.value)" />
+        </div>
+
+        <!-- Action bar (HorizontalStackLayout) -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+          ${db.currentUser.rol === 'Administrador' ? `
+            <button onclick="abrirModalLibro()" class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;">
+              + Nuevo libro
+            </button>
+          ` : `<span></span>`}
+          <small style="color:#94a3b8; font-size:0.72rem;">${librosFiltrados.length} libros encontrados</small>
+        </div>
+
+        <!-- Category chips (FlexLayout) -->
+        <div class="chips-flex">
+          ${categorias.map(cat => `
+            <div class="chip ${filtroCategoriaActual === cat ? 'active' : ''}" onclick="seleccionarCategoria('${cat}')">
+              ${cat}
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Catalog Grid with AbsoluteLayout Badges -->
+        <div class="catalog-grid">
+          ${librosFiltrados.map(l => `
+            <div class="book-card" onclick="verDetalleLibro(${l.id})">
+              ${l.nuevo ? `<div class="book-badge-new">NUEVO</div>` : ''}
+              <div class="book-badge-disp ${l.disponible ? 'badge-disp-si' : 'badge-disp-no'}">
+                ${l.disponible ? 'Disponible' : 'Prestado'}
+              </div>
+              <div class="book-cover">📖</div>
+              <div class="book-info">
+                <div class="book-title" title="${l.titulo}">${l.titulo}</div>
+                <div class="book-author">${l.autor}</div>
+                <div class="book-cat">${l.categoria} • ${l.anio}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function renderPrestamos(container) {
+      const activos = db.prestamos.filter(p => !p.fechaDevolucion);
+      const historial = db.prestamos.filter(p => p.fechaDevolucion);
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h3 style="font-size:0.95rem;">Préstamos Activos (${activos.length})</h3>
+          ${db.currentUser.rol === 'Administrador' ? `
+            <button onclick="abrirModalPrestamo()" class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;">
+              + Nuevo préstamo
+            </button>
+          ` : ''}
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${activos.map(p => {
+            const libro = db.libros.find(l => l.id === p.idLibro) || { titulo: 'Desconocido' };
+            const usuario = db.usuarios.find(u => u.id === p.idUsuario) || { nombre: 'Desconocido' };
+            const esVencido = new Date(p.fechaLimite) < new Date('2026-11-13');
+
+            return `
+              <div style="background:#1e293b; padding:10px; border-radius:10px; border:1px solid ${esVencido ? '#ef4444' : '#334155'};">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+                  <strong style="font-size:0.82rem; color:white;">${libro.titulo}</strong>
+                  <span style="font-size:0.65rem; padding:1px 6px; border-radius:4px; font-weight:700; ${esVencido ? 'background:#ef4444; color:white;' : 'background:#10b981; color:white;'}">
+                    ${esVencido ? 'VENCIDO' : 'A TIEMPO'}
+                  </span>
+                </div>
+                <div style="font-size:0.72rem; color:#94a3b8; margin-bottom:6px;">
+                  Lector: <strong style="color:#cbd5e1;">${usuario.nombre}</strong><br>
+                  Fecha límite: <span style="color:#e2e8f0;">${p.fechaLimite}</span>
+                </div>
+                ${db.currentUser.rol === 'Administrador' ? `
+                  <button onclick="devolverLibro(${p.id})" style="width:100%; padding:4px; font-size:0.72rem; background:#334155; border:none; color:#38bdf8; border-radius:6px; cursor:pointer;">
+                    ✓ Registrar Devolución
+                  </button>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="margin-top:1.5rem;">
+          <h4 style="font-size:0.85rem; color:#94a3b8; margin-bottom:0.5rem;">Historial Reciente (${historial.length})</h4>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${historial.map(p => {
+              const libro = db.libros.find(l => l.id === p.idLibro) || { titulo: 'Desconocido' };
+              const usuario = db.usuarios.find(u => u.id === p.idUsuario) || { nombre: 'Desconocido' };
+              return `
+                <div style="background:#0f172a; padding:6px 10px; border-radius:8px; border:1px solid #1e293b; font-size:0.72rem; color:#94a3b8;">
+                  <span style="color:white; font-weight:600;">${libro.titulo}</span> devuelto por ${usuario.nombre} el ${p.fechaDevolucion}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderUsuarios(container) {
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h3 style="font-size:0.95rem;">Usuarios del Sistema</h3>
+          ${db.currentUser.rol === 'Administrador' ? `
+            <button onclick="alert('En la versión móvil puedes agregar más usuarios con hash PBKDF2');" class="btn btn-outline" style="padding:4px 8px; font-size:0.72rem;">
+              + Usuario
+            </button>
+          ` : ''}
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${db.usuarios.map(u => `
+            <div style="background:#1e293b; padding:10px; border-radius:10px; border:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="font-size:0.85rem; color:white; display:block;">${u.nombre}</strong>
+                <span style="font-size:0.72rem; color:#94a3b8;">@${u.usuario} • ${u.email}</span>
+              </div>
+              <span class="role-pill" style="${u.rol === 'Administrador' ? 'background:#2563eb;' : 'background:#64748b;'} font-size:0.68rem;">
+                ${u.rol}
+              </span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function filtrarBusqueda(texto) {
+      busquedaActual = texto;
+      renderCatalogo(document.getElementById('app-body'));
+    }
+
+    function seleccionarCategoria(cat) {
+      filtroCategoriaActual = cat;
+      renderCatalogo(document.getElementById('app-body'));
+    }
+
+    function abrirModalLibro() {
+      document.getElementById('libro-id').value = '0';
+      document.getElementById('modal-title').textContent = 'Nuevo Libro';
+      document.getElementById('libro-titulo').value = '';
+      document.getElementById('libro-autor').value = '';
+      document.getElementById('libro-categoria').value = 'Programación';
+      document.getElementById('libro-anio').value = '2024';
+      document.getElementById('book-modal').classList.add('open');
+    }
+
+    function cerrarModalLibro() {
+      document.getElementById('book-modal').classList.remove('open');
+    }
+
+    function guardarLibro(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('libro-id').value);
+      const titulo = document.getElementById('libro-titulo').value.trim();
+      const autor = document.getElementById('libro-autor').value.trim();
+      const categoria = document.getElementById('libro-categoria').value;
+      const anio = parseInt(document.getElementById('libro-anio').value) || 2024;
+
+      if (id === 0) {
+        const nuevoId = Math.max(...db.libros.map(l => l.id), 0) + 1;
+        db.libros.push({ id: nuevoId, titulo, autor, categoria, anio, disponible: true, nuevo: true });
+        alert(`¡Libro "${titulo}" guardado exitosamente en SQLite!`);
+      } else {
+        const libro = db.libros.find(l => l.id === id);
+        if (libro) {
+          libro.titulo = titulo;
+          libro.autor = autor;
+          libro.categoria = categoria;
+          libro.anio = anio;
+        }
+      }
+
+      cerrarModalLibro();
+      actualizarContadoresBD();
+      cambiarPestana(pestanaActual);
+    }
+
+    function verDetalleLibro(id) {
+      const libro = db.libros.find(l => l.id === id);
+      if (!libro) return;
+
+      if (db.currentUser.rol !== 'Administrador') {
+        alert(`📖 "${libro.titulo}"\nAutor: ${libro.autor}\nCategoría: ${libro.categoria}\nAño: ${libro.anio}\nEstado: ${libro.disponible ? 'Disponible' : 'Prestado'}`);
+        return;
+      }
+
+      const accion = confirm(`📖 "${libro.titulo}"\nAutor: ${libro.autor}\nCategoría: ${libro.categoria}\n\n¿Deseas editar este libro? (Cancelar para opciones de eliminación)`);
+      if (accion) {
+        document.getElementById('libro-id').value = libro.id;
+        document.getElementById('modal-title').textContent = 'Editar Libro';
+        document.getElementById('libro-titulo').value = libro.titulo;
+        document.getElementById('libro-autor').value = libro.autor;
+        document.getElementById('libro-categoria').value = libro.categoria;
+        document.getElementById('libro-anio').value = libro.anio;
+        document.getElementById('book-modal').classList.add('open');
+      } else {
+        const borrar = confirm(`¿Estás seguro de ELIMINAR "${libro.titulo}" de la base de datos?`);
+        if (borrar) {
+          db.libros = db.libros.filter(l => l.id !== id);
+          actualizarContadoresBD();
+          cambiarPestana(pestanaActual);
+          alert('Libro eliminado de la base SQLite.');
+        }
+      }
+    }
+
+    function abrirModalPrestamo() {
+      const selectLibro = document.getElementById('prestamo-libro');
+      const selectUsuario = document.getElementById('prestamo-usuario');
+
+      const disponibles = db.libros.filter(l => l.disponible);
+      if (disponibles.length === 0) {
+        alert('No hay libros disponibles para préstamo.');
+        return;
+      }
+
+      selectLibro.innerHTML = disponibles.map(l => `<option value="${l.id}">${l.titulo} (${l.autor})</option>`).join('');
+      selectUsuario.innerHTML = db.usuarios.filter(u => u.rol === 'Lector').map(u => `<option value="${u.id}">${u.nombre} (@${u.usuario})</option>`).join('');
+
+      document.getElementById('loan-modal').classList.add('open');
+    }
+
+    function cerrarModalPrestamo() {
+      document.getElementById('loan-modal').classList.remove('open');
+    }
+
+    function guardarPrestamo(e) {
+      e.preventDefault();
+      const idLibro = parseInt(document.getElementById('prestamo-libro').value);
+      const idUsuario = parseInt(document.getElementById('prestamo-usuario').value);
+      const dias = parseInt(document.getElementById('prestamo-dias').value) || 7;
+
+      const libro = db.libros.find(l => l.id === idLibro);
+      if (libro) libro.disponible = false;
+
+      const hoy = new Date();
+      const limite = new Date();
+      limite.setDate(hoy.getDate() + dias);
+
+      const nuevoId = Math.max(...db.prestamos.map(p => p.id), 0) + 1;
+      db.prestamos.push({
+        id: nuevoId,
+        idLibro,
+        idUsuario,
+        fechaPrestamo: hoy.toISOString().split('T')[0],
+        fechaLimite: limite.toISOString().split('T')[0],
+        fechaDevolucion: null
+      });
+
+      cerrarModalPrestamo();
+      actualizarContadoresBD();
+      cambiarPestana('prestamos');
+      alert('Préstamo registrado exitosamente (Transacción atómica completada).');
+    }
+
+    function devolverLibro(idPrestamo) {
+      const prestamo = db.prestamos.find(p => p.id === idPrestamo);
+      if (!prestamo) return;
+
+      const libro = db.libros.find(l => l.id === prestamo.idLibro);
+      if (libro) libro.disponible = true;
+
+      prestamo.fechaDevolucion = new Date().toISOString().split('T')[0];
+
+      actualizarContadoresBD();
+      cambiarPestana('prestamos');
+      alert(`El libro "${libro ? libro.titulo : ''}" ha sido marcado como devuelto y disponible.`);
+    }
+
+    function iniciarSesionComo(usuarioKey) {
+      const user = db.usuarios.find(u => u.usuario === usuarioKey);
+      if (user) {
+        db.currentUser = user;
+        document.getElementById('app-user-label').textContent = `Sesión: ${user.usuario}`;
+        const badge = document.getElementById('role-badge');
+        badge.textContent = user.rol;
+        badge.style.background = user.rol === 'Administrador' ? '#2563eb' : '#64748b';
+        cambiarPestana('inicio');
+      }
+    }
+
+    function cerrarSesionApp() {
+      const usuario = prompt('Elige cuenta de prueba:\n1. admin (Administrador)\n2. alumno (Lector)\nEscribe "admin" o "alumno":', 'admin');
+      if (usuario === 'admin' || usuario === 'alumno') {
+        iniciarSesionComo(usuario);
+      }
+    }
+
+    // Initialize App on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      actualizarContadoresBD();
+      cambiarPestana('inicio');
+    });
+  </script>
+</body>
+</html>
