@@ -1,136 +1,114 @@
-# 📖 Biblioteca Móvil · .NET MAUI 10
+# Práctica: Aplicación Biblioteca Móvil (.NET MAUI 10)
 
-[![GitHub Pages](https://img.shields.io/badge/Demo_Web-GitHub_Pages-2563eb?style=for-the-badge&logo=github)](https://hermelindarr.github.io/BibliotecaMovil/)
-[![.NET MAUI](https://img.shields.io/badge/.NET_MAUI-10.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite)](https://sqlite.org/)
-[![C#](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=csharp)](https://learn.microsoft.com/dotnet/csharp/)
-[![Universidad](https://img.shields.io/badge/UTSJR-Unidad_Académica_Jalpan-1e3a8a?style=for-the-badge)](https://utsjr.edu.mx/)
+**Universidad Tecnológica de San Juan del Río (UTSJR) · Unidad Académica Jalpan**  
+**Carrera:** Ingeniería en Desarrollo y Gestión de Software (IDyGS)  
+**Materia:** Desarrollo de Aplicaciones Móviles  
+**Unidad 3:** Persistencia y Acceso a Datos & Diseño de Interfaces  
+**Alumna:** Hermelinda Rivera Reséndiz  
 
-Aplicación multiplataforma de gestión bibliotecaria desarrollada para **Android y Windows** en **.NET MAUI 10**, con **persistencia local en SQLite**, **patrón DAO** y el cumplimiento integral de las **7 actividades de diseño de interfaces** de la Unidad 3.
-
-🌐 **Sitio Web & Simulador en Vivo:** [https://hermelindarr.github.io/BibliotecaMovil/](https://hermelindarr.github.io/BibliotecaMovil/)
+🌐 **Página web del proyecto en GitHub Pages:** [https://hermelindarr.github.io/BibliotecaMovil/](https://hermelindarr.github.io/BibliotecaMovil/)
 
 ---
 
-## 🚀 Cómo ejecutar la aplicación
+## 📌 Descripción de la práctica
 
-### Opción 1: Visual Studio 2026 (o Visual Studio 2022 v17.10+)
-1. Abre Visual Studio con la carga de trabajo **Desarrollo de interfaz de usuario de aplicaciones multiplataforma de .NET (.NET MAUI)** instalada.
-2. Abre el archivo de solución o proyecto: `BibliotecaMovil.csproj`.
-3. Espera a que los paquetes NuGet (`sqlite-net-pcl` y `SQLitePCLRaw.bundle_green`) se restauren automáticamente.
-4. En el selector superior de destinos de depuración:
-   - **Windows:** Selecciona `Windows Machine` y presiona **F5**.
-   - **Android:** Selecciona tu emulador Android (Pixel con API 31+) o dispositivo físico y presiona **F5**.
+En esta práctica desarrollé una aplicación de **Biblioteca Móvil** utilizando **.NET MAUI 10** en C#. El objetivo principal fue aprender a implementar la **persistencia de datos local con SQLite**, aplicar el patrón de diseño **DAO** para separar la base de datos de las pantallas, y poner en práctica las **7 actividades de diseño** de interfaces que vimos en la unidad.
 
-### Opción 2: Terminal (.NET CLI)
-```bash
-# Compilar y ejecutar directamente en Windows
-dotnet build -t:Run -f net10.0-windows10.0.19041.0
-```
+La aplicación permite:
+- Iniciar sesión con control de roles (**Administrador** y **Lector**).
+- Consultar un catálogo de libros con buscador por texto y filtros por categorías.
+- Dar de alta, editar y eliminar libros (CRUD completo).
+- Registrar préstamos de libros y devoluciones, cambiando automáticamente el estado a disponible o prestado.
+- Consultar usuarios registrados.
 
 ---
 
-## 👥 Cuentas de Acceso Preconfiguradas
+## 🚀 Cómo abrir y ejecutar el proyecto
 
-| Usuario | Contraseña | Rol | Permisos |
-| :--- | :--- | :--- | :--- |
-| `admin` | `admin123` | **Administrador** | CRUD completo de libros, préstamos, devoluciones, historial y gestión de usuarios. |
-| `alumno` | `alumno123` | **Lector** | Búsqueda y filtrado en el catálogo, consulta de disponibilidad y préstamos personales. |
-| `mrojas` | `lector123` | **Lector** | Consulta de catálogo y préstamos personales. |
+1. Descarga o clona este repositorio en tu computadora:
+   ```bash
+   git clone https://github.com/hermelindarr/BibliotecaMovil.git
+   ```
+2. Abre **Visual Studio 2026** (o Visual Studio 2022 con .NET MAUI instalado).
+3. Selecciona *Archivo > Abrir > Proyecto o solución* y abre el archivo `BibliotecaMovil.csproj`.
+4. Espera a que Visual Studio restaure los paquetes NuGet (`sqlite-net-pcl` y `SQLitePCLRaw.bundle_green`).
+5. En la parte superior elige el dispositivo de prueba:
+   - Para Windows: Selecciona **Windows Machine** y presiona **F5**.
+   - Para Android: Selecciona un **Emulador Android** y presiona **F5**.
 
-> La base de datos local `biblioteca.db3` se inicializa y siembra automáticamente en el primer inicio con 13 libros, 3 usuarios y 3 préstamos de prueba.
+### Cuentas de prueba preconfiguradas:
+
+| Usuario | Contraseña | Rol | Lo que puede hacer |
+|---|---|---|---|
+| `admin` | `admin123` | Administrador | Control total: registrar libros, editarlos, borrarlos, hacer préstamos y devoluciones. |
+| `alumno` | `alumno123` | Lector | Consulta de libros en el catálogo y ver sus préstamos. |
+| `mrojas` | `lector123` | Lector | Consulta de libros y préstamos. |
+
+> Nota: La base de datos local `biblioteca.db3` se crea de forma automática en el primer inicio de la app con 13 libros y préstamos de ejemplo.
 
 ---
 
 ## 🎨 Las 7 Actividades de Diseño (.NET MAUI Layouts)
 
-Cumplimiento riguroso de la guía práctica de diseño multiplataforma:
+En el proyecto apliqué los 7 contenedores de diseño vistos en clase:
 
-| # | Layout | Dónde se implementa | Archivo fuente |
-|---|--------|---------------------|----------------|
-| **1** | **VerticalStackLayout** | Pantalla de inicio de sesión lineal: Logo, títulos descriptivos, formulario de credenciales y botones apilados verticalmente con espaciado uniforme. | [`Views/LoginPage.xaml`](file:///Views/LoginPage.xaml) |
-| **2** | **HorizontalStackLayout** | Barra de acciones del catálogo (+ Nuevo libro, Lista/Cuadrícula, conteo), botones de acción (Guardar, Cancelar, Devolver) y fila de autores. | [`Views/CatalogoPage.xaml`](file:///Views/CatalogoPage.xaml), [`Views/LibroFormPage.xaml`](file:///Views/LibroFormPage.xaml) |
-| **3** | **Grid** | Formulario de captura estructurado con columnas `Auto,*` para etiquetas y campos, y panel de métricas en Inicio con `*,*,*`. | [`Views/LibroFormPage.xaml`](file:///Views/LibroFormPage.xaml), [`Views/InicioPage.xaml`](file:///Views/InicioPage.xaml) |
-| **4** | **FlexLayout** | Filtro de categorías dinámico con envoltorio (`Direction="Row"`, `Wrap="Wrap"`), adaptándose a cualquier ancho de pantalla móvil o de escritorio. | [`Views/CatalogoPage.xaml`](file:///Views/CatalogoPage.xaml) |
-| **5** | **AbsoluteLayout** | Fondo decorativo de inicio de sesión con capas superpuestas, círculos flotantes e insignias dinámicas ("Nuevo", "Disponible") superpuestas sobre las portadas de los libros. | [`Views/LoginPage.xaml`](file:///Views/LoginPage.xaml), [`Views/CatalogoPage.xaml`](file:///Views/CatalogoPage.xaml) |
-| **6** | **BindableLayout** | Enlace y renderizado de colecciones dinámicas (chips de categorías, autores destacados) sin la sobrecarga pesada de un CollectionView. | [`Views/CatalogoPage.xaml`](file:///Views/CatalogoPage.xaml), [`Views/InicioPage.xaml`](file:///Views/InicioPage.xaml) |
-| **7** | **Diseño Personalizado (Custom Layout) & Estilos** | `MosaicoLayout`: contenedor propio que hereda de `Layout` e implementa `ILayoutManager` (`Measure` y `ArrangeChildren`) para alternar celdas destacadas y secundarias. Además de recursos globales y tema claro/oscuro. | [`Controls/MosaicoLayout.cs`](file:///Controls/MosaicoLayout.cs), [`Resources/Styles/Styles.xaml`](file:///Resources/Styles/Styles.xaml) |
+1. **VerticalStackLayout:** Lo utilicé en la pantalla de login (`Views/LoginPage.xaml`) para apilar hacia abajo el logo, los títulos, los campos de texto de usuario y contraseña, y el botón de entrar.
+2. **HorizontalStackLayout:** Lo usé en la barra de botones del catálogo (`Views/CatalogoPage.xaml`) para colocar los botones de `+ Nuevo libro`, el botón de cambiar vista y el total de libros en una sola fila.
+3. **Grid:** Lo apliqué en el formulario de registro de libros (`Views/LibroFormPage.xaml`) con `ColumnDefinitions="Auto,*"` para que las etiquetas queden alineadas a la izquierda y las cajas de texto ocupen el resto del ancho.
+4. **FlexLayout:** Lo implementé en los chips de categorías del catálogo (`Views/CatalogoPage.xaml`) con `Wrap="Wrap"` para que los botones brinquen de renglón si la pantalla del celular es pequeña.
+5. **AbsoluteLayout:** Lo usé en el fondo del login para superponer círculos decorativos y en las portadas de los libros para colocar la etiqueta flotante de **NUEVO** en la esquina superior.
+6. **BindableLayout:** Lo utilicé en `CatalogoPage.xaml` para generar los botones de categorías dinámicamente desde una lista en C# sin tener que usar un CollectionView pesado.
+7. **Diseño Personalizado (Custom Layout):** Programé mi propio contenedor en C# llamado `MosaicoLayout` en la carpeta `Controls/MosaicoLayout.cs` heredando de `Layout` e implementando `ILayoutManager`. Este layout acomoda los accesos directos en forma de mosaico (una tarjeta ancha y dos tarjetas chicas). Además personalicé los colores y estilos en `Resources/Styles/Styles.xaml`.
 
 ---
 
-## 🗄️ Persistencia y Acceso a Datos (Unidad 3)
+## 💾 Persistencia y Acceso a Datos (SQLite + DAO)
 
-### Arquitectura en Capas
-```
-┌──────────────────────────────────────────────┐
-│                  VISTAS UI                   │
-│   LoginPage · InicioPage · CatalogoPage      │
-│   LibroFormPage · PrestamosPage              │
-└──────────────────────┬───────────────────────┘
-                       │ Inyección de dependencias
-┌──────────────────────▼───────────────────────┐
-│              CAPA DAO (CONTRATOS)            │
-│   ILibroDAO · IPrestamoDAO · IUsuarioDAO     │
-└──────────────────────┬───────────────────────┘
-                       │ Implementación asíncrona
-┌──────────────────────▼───────────────────────┐
-│           ORM & BASE DE DATOS LOCAL          │
-│   SQLiteAsyncConnection (biblioteca.db3)     │
-│   Tablas: Libros, Usuarios, Prestamos        │
-└──────────────────────────────────────────────┘
-```
-
-- **Mapeo Objeto-Relacional (ORM):** Modelado declarativo mediante atributos `[Table]`, `[PrimaryKey, AutoIncrement]`, `[Indexed]` y `[MaxLength]`.
-- **Transacciones Atómicas:** El registro y devolución de préstamos utiliza transacciones (`RunInTransactionAsync`) para asegurar la consistencia entre el cambio de estado del libro (`Disponible = false/true`) y el registro del préstamo.
-- **Consultas Optimizadas:** Creación programática de índices compuestos como `CREATE INDEX idx_prestamos_activos ON Prestamos (FechaDevolucion, FechaLimite)`, consultas parametrizadas contra SQL Injection y proyecciones selectivas.
-- **Seguridad Criptográfica:** Hashing seguro de contraseñas mediante **PBKDF2-SHA256** con sal generada de forma criptográfica (`PasswordHasher.cs`).
+- **Base de datos SQLite:** Se utiliza `biblioteca.db3` con sqlite-net-pcl en modo asíncrono (`SQLiteAsyncConnection`).
+- **Tablas:** Se definieron tres modelos en la carpeta `Models/`:
+  - `Libro.cs`: id, título, autor, categoría, año, disponible.
+  - `Usuario.cs`: id, nombre, usuario, correo, rol, hash de contraseña.
+  - `Prestamo.cs`: id, idLibro, idUsuario, fechas de préstamo y devolución.
+- **Patrón DAO:** Todo el acceso a la base de datos se realiza a través de las interfaces en `Data/Interfaces.cs` (`ILibroDAO`, `IPrestamoDAO`, `IUsuarioDAO`) y sus clases correspondientes en `Data/`. Esto hace que las páginas XAML no toquen directamente SQLite.
+- **Optimización:** Se creó un índice compuesto `CREATE INDEX IF NOT EXISTS idx_prestamos_activos ON Prestamos (FechaDevolucion, FechaLimite)` para acelerar las consultas de libros prestados.
+- **Transacciones:** Cuando se registra un préstamo o una devolución, se ejecuta una transacción atómica para asegurar que el libro cambie su estado a disponible/no disponible al mismo tiempo que se guarda el préstamo.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del proyecto
 
 ```
 BibliotecaMovil/
 ├── Controls/
-│   └── MosaicoLayout.cs          # Actividad 7: Custom Layout (Layout + ILayoutManager)
+│   └── MosaicoLayout.cs          # Actividad 7: Layout propio en C#
 ├── Data/
-│   ├── BibliotecaDatabase.cs     # Inicialización de SQLite, tablas e índices
-│   ├── Interfaces.cs             # Contratos DAO (ILibroDAO, IUsuarioDAO, IPrestamoDAO)
-│   ├── LibroDAO.cs               # Implementación CRUD y consultas optimizadas
-│   ├── PrestamoDAO.cs            # Transacciones de préstamos y devoluciones
-│   └── UsuarioDAO.cs             # Autenticación y gestión de usuarios
+│   ├── BibliotecaDatabase.cs     # Conexión y creación de tablas SQLite
+│   ├── Interfaces.cs             # Interfaces del patrón DAO
+│   ├── LibroDAO.cs               # Consultas y CRUD de libros
+│   ├── PrestamoDAO.cs            # Registro de préstamos y devoluciones
+│   └── UsuarioDAO.cs             # Autenticación y usuarios
 ├── Helpers/
-│   ├── ObservableObject.cs       # Soporte INotifyPropertyChanged
-│   ├── Paleta.cs                 # Colores del sistema
-│   ├── PasswordHasher.cs         # Hashing criptográfico PBKDF2
-│   └── Sesion.cs                 # Estado de sesión y control por roles
+│   ├── ObservableObject.cs       # Notificaciones de cambio de datos
+│   ├── PasswordHasher.cs         # Cifrado de contraseñas con PBKDF2
+│   └── Sesion.cs                 # Control de rol de usuario actual
 ├── Models/
-│   ├── Libro.cs                  # Entidad Libro
-│   ├── Usuario.cs                # Entidad Usuario
-│   ├── Prestamo.cs               # Entidad Préstamo
-│   ├── Categorias.cs             # Catálogo de categorías
-│   └── FiltroCategoria.cs        # Modelo para chips de filtro
+│   ├── Libro.cs
+│   ├── Usuario.cs
+│   ├── Prestamo.cs
+│   └── Categorias.cs
 ├── Resources/
-│   ├── AppIcon/                  # Iconografía
-│   ├── Images/                   # Iconos SVG de navegación
-│   └── Styles/                   # Actividad 7: Colores y estilos globales
+│   ├── AppIcon/                  # Icono de la app
+│   ├── Images/                   # Iconos de las pestañas
+│   └── Styles/                   # Colores y estilos globales
 ├── Views/
-│   ├── LoginPage.xaml            # Actividad 1 & 5 (VerticalStackLayout + AbsoluteLayout)
-│   ├── InicioPage.xaml           # Actividad 3, 6 & 7 (Grid + BindableLayout + MosaicoLayout)
-│   ├── CatalogoPage.xaml         # Actividad 2, 4, 5 & 6 (FlexLayout + Chips + Badges)
-│   ├── LibroFormPage.xaml        # Actividad 2 & 3 (Grid Formulario Auto,*)
-│   ├── PrestamosPage.xaml        # Gestión de préstamos
-│   └── UsuariosPage.xaml         # Gestión de usuarios
-├── index.html                    # Publicación oficial en GitHub Pages con Simulador
-├── docs/index.html               # Espejo para configuración alternativa en GitHub Pages
-├── .nojekyll                     # Configuración de despliegue estático para Pages
-├── App.xaml / AppShell.xaml      # Navegación basada en Shell con TabBar
-└── MauiProgram.cs                # Configuración e inyección de dependencias
+│   ├── LoginPage.xaml            # Login (VerticalStackLayout y AbsoluteLayout)
+│   ├── InicioPage.xaml           # Inicio (MosaicoLayout y Grid)
+│   ├── CatalogoPage.xaml         # Catálogo (FlexLayout, HorizontalStackLayout)
+│   ├── LibroFormPage.xaml        # Formulario (Grid)
+│   ├── PrestamosPage.xaml        # Préstamos
+│   └── UsuariosPage.xaml         # Usuarios
+├── index.html                    # Página para GitHub Pages
+├── docs/index.html               # Respaldo para GitHub Pages
+├── App.xaml / AppShell.xaml      # Navegación con pestañas
+└── MauiProgram.cs                # Inicialización de servicios y DAOs
 ```
-
----
-
-## 🏛️ Institución
-- **Universidad Tecnológica de San Juan del Río (UTSJR)**
-- **Unidad Académica Jalpan**
-- **Asignatura:** Desarrollo de Aplicaciones Móviles / Unidad 3
