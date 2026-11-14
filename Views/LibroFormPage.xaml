@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Registro / edición de libro
+    · Actividad 3 (Grid): formulario con etiquetas (columna Auto) y campos (columna *).
+    · Actividad 2 (HorizontalStackLayout): botones Guardar / Eliminar / Cancelar en una fila.
+    · Actividad 5 (AbsoluteLayout): vista previa de la portada con insignia superpuesta.
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BibliotecaMovil.Views.LibroFormPage"
+             Title="Nuevo libro">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="18" MaximumWidthRequest="640">
+
+            <!-- Vista previa de la portada -->
+            <Border x:Name="Portada" WidthRequest="120" HeightRequest="160"
+                    StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{StaticResource Primario}"
+                    HorizontalOptions="Center">
+                <AbsoluteLayout>
+                    <Label x:Name="LblIniciales" Text="?"
+                           TextColor="White" FontSize="40" FontAttributes="Bold"
+                           AbsoluteLayout.LayoutBounds="0.5,0.5,AutoSize,AutoSize"
+                           AbsoluteLayout.LayoutFlags="PositionProportional" />
+                    <Border x:Name="InsigniaEstado" Style="{StaticResource Insignia}"
+                            BackgroundColor="{StaticResource Exito}" Margin="8"
+                            AbsoluteLayout.LayoutBounds="0.5,1,AutoSize,AutoSize"
+                            AbsoluteLayout.LayoutFlags="PositionProportional">
+                        <Label x:Name="LblEstado" Text="Disponible" Style="{StaticResource TextoInsignia}" />
+                    </Border>
+                </AbsoluteLayout>
+            </Border>
+
+            <!-- Formulario en Grid: 2 columnas (Auto, *) y 4 filas -->
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto,Auto"
+                      ColumnSpacing="14" RowSpacing="12">
+
+                    <Label Text="Título:" Style="{StaticResource Etiqueta}" />
+                    <Entry x:Name="EntTitulo" Grid.Column="1"
+                           Placeholder="Nombre del libro" MaxLength="150"
+                           TextChanged="OnTituloCambiado" />
+
+                    <Label Grid.Row="1" Text="Autor:" Style="{StaticResource Etiqueta}" />
+                    <Entry x:Name="EntAutor" Grid.Row="1" Grid.Column="1"
+                           Placeholder="Nombre del autor" MaxLength="120" />
+
+                    <Label Grid.Row="2" Text="Categoría:" Style="{StaticResource Etiqueta}" />
+                    <Picker x:Name="PkrCategoria" Grid.Row="2" Grid.Column="1"
+                            Title="Elige una categoría"
+                            SelectedIndexChanged="OnCategoriaCambiada" />
+
+                    <Label Grid.Row="3" Text="Año:" Style="{StaticResource Etiqueta}" />
+                    <Entry x:Name="EntAnio" Grid.Row="3" Grid.Column="1"
+                           Placeholder="Ej. 2024" Keyboard="Numeric" MaxLength="4" />
+                </Grid>
+            </Border>
+
+            <Label x:Name="LblError" Style="{StaticResource Error}" IsVisible="False" />
+
+            <!-- Barra de acciones -->
+            <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                <Button x:Name="BtnGuardar" Text="Guardar libro" Style="{StaticResource BtnExito}" Clicked="OnGuardar" />
+                <Button x:Name="BtnEliminar" Text="Eliminar" Style="{StaticResource BtnPeligro}" IsVisible="False" Clicked="OnEliminar" />
+                <Button Text="Cancelar" Style="{StaticResource BtnContorno}" Clicked="OnCancelar" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

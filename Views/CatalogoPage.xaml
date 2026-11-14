@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Catálogo de libros
+    · Actividad 3 (Grid): estructura de la página en filas (buscador, acciones, filtros, lista)
+      y cuadrícula de libros (GridItemsLayout de 1 a 4 columnas según el ancho).
+    · Actividad 2 (HorizontalStackLayout): barra de acciones.
+    · Actividad 4 (FlexLayout): chips de categorías que saltan de línea (Wrap).
+    · Actividad 6 (BindableLayout): los chips se generan desde una colección.
+    · Actividad 5 (AbsoluteLayout): insignias "Nuevo" y estado superpuestas sobre la portada.
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:modelos="clr-namespace:BibliotecaMovil.Models"
+             x:Class="BibliotecaMovil.Views.CatalogoPage"
+             Title="Catálogo">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="12" Padding="16,12,16,0">
+
+        <!-- Fila 0: buscador -->
+        <SearchBar x:Name="Buscador"
+                   Placeholder="Buscar por título o autor"
+                   TextChanged="OnBuscar" />
+
+        <!-- Fila 1: barra de acciones -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="10">
+            <Button x:Name="BtnNuevo" Text="+ Nuevo libro" Style="{StaticResource BtnExito}" Clicked="OnNuevo" />
+            <Button x:Name="BtnVista" Text="☰ Lista" Style="{StaticResource BtnContorno}" Clicked="OnCambiarVista" />
+            <Label x:Name="LblConteo" Style="{StaticResource Subtitulo}" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <!-- Fila 2: filtros por categoría -->
+        <FlexLayout x:Name="Filtros" Grid.Row="2"
+                    Direction="Row" Wrap="Wrap"
+                    JustifyContent="Start" AlignItems="Center">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="modelos:FiltroCategoria">
+                    <Border Style="{StaticResource Chip}" BackgroundColor="{Binding Fondo}" Margin="0,0,8,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnFiltroTapped" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="{Binding Nombre}" TextColor="{Binding ColorTexto}"
+                               FontSize="13" FontAttributes="Bold" />
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>
+
+        <!-- Fila 3: libros -->
+        <CollectionView x:Name="ListaLibros" Grid.Row="3" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="2"
+                                 HorizontalItemSpacing="12" VerticalItemSpacing="12" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="24,48" Spacing="8" HorizontalOptions="Center">
+                    <Label Text="🔍" FontSize="40" HorizontalOptions="Center" />
+                    <Label Text="No encontramos libros" Style="{StaticResource Seccion}" HorizontalOptions="Center" />
+                    <Label Text="Prueba con otra palabra o elige la categoría «Todos»."
+                           Style="{StaticResource Subtitulo}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="modelos:Libro">
+                    <Border Style="{StaticResource Card}" Padding="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLibroTapped" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid RowDefinitions="120,Auto">
+                            <!-- Portada con elementos superpuestos -->
+                            <AbsoluteLayout BackgroundColor="{Binding ColorPortada}">
+                                <Label Text="{Binding Iniciales}"
+                                       TextColor="White" FontSize="36" FontAttributes="Bold"
+                                       AbsoluteLayout.LayoutBounds="0.5,0.5,AutoSize,AutoSize"
+                                       AbsoluteLayout.LayoutFlags="PositionProportional" />
+                                <Border Style="{StaticResource Insignia}" BackgroundColor="{StaticResource Peligro}"
+                                        IsVisible="{Binding EsNuevo}" Margin="8"
+                                        AbsoluteLayout.LayoutBounds="1,0,AutoSize,AutoSize"
+                                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                                    <Label Text="Nuevo" Style="{StaticResource TextoInsignia}" />
+                                </Border>
+                                <Border Style="{StaticResource Insignia}" BackgroundColor="{Binding ColorEstado}"
+                                        Margin="8"
+                                        AbsoluteLayout.LayoutBounds="0,1,AutoSize,AutoSize"
+                                        AbsoluteLayout.LayoutFlags="PositionProportional">
+                                    <Label Text="{Binding EstadoTexto}" Style="{StaticResource TextoInsignia}" />
+                                </Border>
+                            </AbsoluteLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Padding="12,10,12,12" Spacing="2">
+                                <Label Text="{Binding Titulo}" FontAttributes="Bold"
+                                       MaxLines="2" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Autor}" Style="{StaticResource Subtitulo}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Categoria}" FontSize="12" FontAttributes="Bold"
+                                       TextColor="{Binding ColorPortada}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="16" Color="Transparent" />
+            </CollectionView.Footer>
+        </CollectionView>
+    </Grid>
+</ContentPage>

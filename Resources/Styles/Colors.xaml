@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Colores de marca -->
+    <Color x:Key="Primario">#2563EB</Color>
+    <Color x:Key="PrimarioOscuro">#1E3A8A</Color>
+    <Color x:Key="Secundario">#7C3AED</Color>
+    <Color x:Key="Exito">#16A34A</Color>
+    <Color x:Key="Peligro">#DC2626</Color>
+    <Color x:Key="Naranja">#EA580C</Color>
+    <Color x:Key="Turquesa">#0891B2</Color>
+    <Color x:Key="Pizarra">#475569</Color>
+    <Color x:Key="Blanco">#FFFFFF</Color>
+
+    <!-- Tema claro -->
+    <Color x:Key="FondoClaro">#F1F5F9</Color>
+    <Color x:Key="SuperficieClara">#FFFFFF</Color>
+    <Color x:Key="TextoClaro">#0F172A</Color>
+    <Color x:Key="TextoSuaveClaro">#64748B</Color>
+    <Color x:Key="BordeClaro">#E2E8F0</Color>
+
+    <!-- Tema oscuro -->
+    <Color x:Key="FondoOscuro">#0F172A</Color>
+    <Color x:Key="SuperficieOscura">#1E293B</Color>
+    <Color x:Key="TextoOscuro">#F1F5F9</Color>
+    <Color x:Key="TextoSuaveOscuro">#94A3B8</Color>
+    <Color x:Key="BordeOscuro">#334155</Color>
+
+</ResourceDictionary>

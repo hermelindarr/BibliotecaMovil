@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Inicio de sesión
+    · Actividad 5 (AbsoluteLayout): fondo, círculos decorativos y contenido superpuestos con LayoutBounds.
+    · Actividad 1 (VerticalStackLayout): logo, título y formulario apilados en vertical.
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BibliotecaMovil.Views.LoginPage"
+             BackgroundColor="{StaticResource PrimarioOscuro}"
+             Title="Iniciar sesión">
+
+    <AbsoluteLayout>
+
+        <!-- Capa 1: fondo degradado a pantalla completa (proporcional: 0,0,1,1) -->
+        <BoxView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="{StaticResource PrimarioOscuro}" Offset="0" />
+                    <GradientStop Color="{StaticResource Primario}" Offset="1" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <!-- Capa 2: círculos decorativos (posición proporcional, tamaño fijo) -->
+        <Ellipse Fill="#1FFFFFFF"
+                 AbsoluteLayout.LayoutBounds="1,0,280,280"
+                 AbsoluteLayout.LayoutFlags="PositionProportional"
+                 TranslationX="90" TranslationY="-90" />
+        <Ellipse Fill="#14FFFFFF"
+                 AbsoluteLayout.LayoutBounds="0,1,240,240"
+                 AbsoluteLayout.LayoutFlags="PositionProportional"
+                 TranslationX="-80" TranslationY="80" />
+
+        <!-- Capa 3: contenido -->
+        <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout Padding="24,56,24,32"
+                                 Spacing="20"
+                                 MaximumWidthRequest="420"
+                                 VerticalOptions="Center">
+
+                <!-- Logo -->
+                <Border WidthRequest="84" HeightRequest="84"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 24"
+                        BackgroundColor="#26FFFFFF"
+                        HorizontalOptions="Center">
+                    <Label Text="📖" FontSize="40"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Biblioteca Móvil"
+                           FontSize="30" FontAttributes="Bold"
+                           TextColor="{StaticResource Blanco}"
+                           HorizontalOptions="Center"
+                           SemanticProperties.HeadingLevel="Level1" />
+                    <Label Text="Consulta el catálogo y administra tus préstamos"
+                           FontSize="14" TextColor="#D9FFFFFF"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <!-- Formulario (VerticalStackLayout dentro de una tarjeta) -->
+                <Border Style="{StaticResource Card}" Padding="20">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Usuario" Style="{StaticResource Etiqueta}" />
+                        <Entry x:Name="EntUsuario"
+                               Placeholder="Ej. admin"
+                               Keyboard="Plain"
+                               ReturnType="Next"
+                               IsSpellCheckEnabled="False"
+                               IsTextPredictionEnabled="False"
+                               Completed="OnUsuarioCompletado" />
+
+                        <Label Text="Contraseña" Style="{StaticResource Etiqueta}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Entry x:Name="EntPassword"
+                                   Placeholder="Tu contraseña"
+                                   IsPassword="True"
+                                   ReturnType="Go"
+                                   Completed="OnIniciarSesion" />
+                            <Button x:Name="BtnVer" Grid.Column="1"
+                                    Text="Ver"
+                                    Style="{StaticResource BtnChicoContorno}"
+                                    VerticalOptions="Center"
+                                    SemanticProperties.Description="Mostrar u ocultar la contraseña"
+                                    Clicked="OnVerPassword" />
+                        </Grid>
+
+                        <Label x:Name="LblError" Style="{StaticResource Error}" IsVisible="False" />
+
+                        <Button x:Name="BtnEntrar"
+                                Text="Iniciar sesión"
+                                Style="{StaticResource BtnPrincipal}"
+                                Margin="0,6,0,0"
+                                Clicked="OnIniciarSesion" />
+
+                        <ActivityIndicator x:Name="Cargando"
+                                           IsRunning="False" IsVisible="False"
+                                           Color="{StaticResource Primario}"
+                                           HeightRequest="24" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Cuentas de prueba: admin / admin123 · alumno / alumno123"
+                       FontSize="12" TextColor="#CCFFFFFF"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </AbsoluteLayout>
+</ContentPage>

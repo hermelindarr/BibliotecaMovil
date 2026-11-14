@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Usuarios (solo administrador)
+    · Actividad 3 (Grid): formulario de usuario en 2 columnas.
+    · Actividad 6 (BindableLayout): lista corta de usuarios generada desde la colección.
+    · Actividad 2 (HorizontalStackLayout): botones del formulario y de cada fila.
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:modelos="clr-namespace:BibliotecaMovil.Models"
+             x:Class="BibliotecaMovil.Views.UsuariosPage"
+             Title="Usuarios">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14,16,28" Spacing="16" MaximumWidthRequest="720">
+
+            <!-- Vista para lectores: su perfil -->
+            <Border x:Name="PanelPerfil" Style="{StaticResource Card}" IsVisible="False">
+                <VerticalStackLayout Spacing="10">
+                    <Border x:Name="AvatarPerfil" WidthRequest="72" HeightRequest="72"
+                            StrokeThickness="0" StrokeShape="RoundRectangle 36"
+                            BackgroundColor="{StaticResource Primario}" HorizontalOptions="Center">
+                        <Label x:Name="LblPerfilIniciales" TextColor="White" FontSize="26" FontAttributes="Bold"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <Label x:Name="LblPerfilNombre" Style="{StaticResource Titulo}" HorizontalOptions="Center" />
+                    <Label x:Name="LblPerfilDetalle" Style="{StaticResource Subtitulo}" HorizontalOptions="Center" />
+                    <Label Text="La administración de usuarios está disponible solo para el rol Administrador."
+                           Style="{StaticResource Subtitulo}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Vista para administradores -->
+            <VerticalStackLayout x:Name="PanelAdmin" Spacing="16">
+
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="Auto,*"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                          ColumnSpacing="14" RowSpacing="10">
+
+                        <Label x:Name="LblFormTitulo" Grid.ColumnSpan="2" Text="Nuevo usuario" Style="{StaticResource Seccion}" />
+
+                        <Label Grid.Row="1" Text="Nombre:" Style="{StaticResource Etiqueta}" />
+                        <Entry x:Name="EntNombre" Grid.Row="1" Grid.Column="1" Placeholder="Nombre completo" MaxLength="120" />
+
+                        <Label Grid.Row="2" Text="Usuario:" Style="{StaticResource Etiqueta}" />
+                        <Entry x:Name="EntUsuario" Grid.Row="2" Grid.Column="1" Placeholder="Ej. jperez"
+                               MaxLength="30" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
+
+                        <Label Grid.Row="3" Text="Correo:" Style="{StaticResource Etiqueta}" />
+                        <Entry x:Name="EntCorreo" Grid.Row="3" Grid.Column="1" Placeholder="correo@ejemplo.com"
+                               Keyboard="Email" MaxLength="120" />
+
+                        <Label Grid.Row="4" Text="Rol:" Style="{StaticResource Etiqueta}" />
+                        <Picker x:Name="PkrRol" Grid.Row="4" Grid.Column="1" Title="Elige un rol" />
+
+                        <Label Grid.Row="5" Text="Contraseña:" Style="{StaticResource Etiqueta}" />
+                        <Entry x:Name="EntPassword" Grid.Row="5" Grid.Column="1"
+                               Placeholder="Mínimo 6 caracteres" IsPassword="True" />
+                    </Grid>
+                </Border>
+
+                <Label x:Name="LblError" Style="{StaticResource Error}" IsVisible="False" />
+
+                <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Button x:Name="BtnGuardar" Text="Guardar usuario" Style="{StaticResource BtnExito}" Clicked="OnGuardar" />
+                    <Button Text="Limpiar" Style="{StaticResource BtnContorno}" Clicked="OnLimpiar" />
+                </HorizontalStackLayout>
+
+                <Label Text="Usuarios registrados" Style="{StaticResource Seccion}" />
+
+                <VerticalStackLayout x:Name="ListaUsuarios" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="modelos:Usuario">
+                            <Border Style="{StaticResource Card}" Padding="12">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border WidthRequest="46" HeightRequest="46"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 23"
+                                            BackgroundColor="{Binding ColorAvatar}" VerticalOptions="Center">
+                                        <Label Text="{Binding Iniciales}" TextColor="White" FontAttributes="Bold"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding Nombre}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Descripcion}" Style="{StaticResource Subtitulo}" />
+                                    </VerticalStackLayout>
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="6" VerticalOptions="Center">
+                                        <Button Text="Editar" Style="{StaticResource BtnChicoContorno}" Clicked="OnEditar" />
+                                        <Button Text="Borrar" Style="{StaticResource BtnChicoPeligro}" Clicked="OnEliminar" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

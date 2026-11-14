@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Inicio
+    · Actividad 3 (Grid): resumen en 3 columnas iguales.
+    · Actividad 7 (Custom Layout): MosaicoLayout con los accesos rápidos.
+    · Actividad 6 (BindableLayout): autores destacados y libros recientes generados desde una colección.
+    · Actividad 2 (HorizontalStackLayout): fila deslizable de autores.
+-->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controles="clr-namespace:BibliotecaMovil.Controls"
+             xmlns:modelos="clr-namespace:BibliotecaMovil.Models"
+             x:Class="BibliotecaMovil.Views.InicioPage"
+             Title="Inicio">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16,20,28" Spacing="20" MaximumWidthRequest="760">
+
+            <!-- Encabezado -->
+            <VerticalStackLayout Spacing="2">
+                <Label x:Name="LblSaludo" Style="{StaticResource Subtitulo}" FontSize="15" />
+                <Label Text="¿Qué quieres hacer hoy?" Style="{StaticResource TituloGrande}"
+                       SemanticProperties.HeadingLevel="Level1" />
+            </VerticalStackLayout>
+
+            <!-- Resumen: Grid de 3 columnas proporcionales -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <Border Style="{StaticResource Card}" Padding="14,12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="LblTotal" Text="–" FontSize="26" FontAttributes="Bold"
+                               TextColor="{StaticResource Primario}" />
+                        <Label Text="Libros" Style="{StaticResource Subtitulo}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}" Padding="14,12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="LblDisponibles" Text="–" FontSize="26" FontAttributes="Bold"
+                               TextColor="{StaticResource Exito}" />
+                        <Label Text="Disponibles" Style="{StaticResource Subtitulo}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="14,12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="LblPrestados" Text="–" FontSize="26" FontAttributes="Bold"
+                               TextColor="{StaticResource Naranja}" />
+                        <Label x:Name="LblPrestadosTexto" Text="Prestados" Style="{StaticResource Subtitulo}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Accesos rápidos: layout personalizado -->
+            <Label Text="Accesos rápidos" Style="{StaticResource Seccion}" />
+            <controles:MosaicoLayout Columnas="2" Espacio="12" AltoCelda="112">
+
+                <Border Style="{StaticResource Tile}" BackgroundColor="{StaticResource Primario}"
+                        SemanticProperties.Description="Abrir el catálogo de libros">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnIrCatalogo" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout VerticalOptions="End" Spacing="2">
+                            <Label Text="Catálogo de libros" Style="{StaticResource TextoTile}" FontSize="19" />
+                            <Label Text="Busca por título o autor y filtra por categoría" Style="{StaticResource TextoTileSuave}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="📚" FontSize="44" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border x:Name="TileNuevo" Style="{StaticResource Tile}" BackgroundColor="{StaticResource Exito}"
+                        SemanticProperties.Description="Registrar un libro nuevo">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnNuevoLibro" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="➕" FontSize="24" />
+                        <Label Text="Registrar libro" Style="{StaticResource TextoTile}" />
+                        <Label Text="Alta en el catálogo" Style="{StaticResource TextoTileSuave}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Tile}" BackgroundColor="{StaticResource Naranja}"
+                        SemanticProperties.Description="Ver préstamos">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnIrPrestamos" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="🔄" FontSize="24" />
+                        <Label x:Name="LblTilePrestamos" Text="Préstamos" Style="{StaticResource TextoTile}" />
+                        <Label Text="Prestar y devolver" Style="{StaticResource TextoTileSuave}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="TileUsuarios" Style="{StaticResource Tile}" BackgroundColor="{StaticResource Secundario}"
+                        SemanticProperties.Description="Administrar usuarios">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnIrUsuarios" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout VerticalOptions="End" Spacing="2">
+                            <Label Text="Usuarios" Style="{StaticResource TextoTile}" FontSize="19" />
+                            <Label Text="Altas, roles y contraseñas" Style="{StaticResource TextoTileSuave}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="👥" FontSize="44" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource Tile}" BackgroundColor="{StaticResource Turquesa}"
+                        SemanticProperties.Description="Ver el reporte de la biblioteca">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnReporte" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="📊" FontSize="24" />
+                        <Label Text="Reporte" Style="{StaticResource TextoTile}" />
+                        <Label Text="Resumen del acervo" Style="{StaticResource TextoTileSuave}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Tile}" BackgroundColor="{StaticResource Pizarra}"
+                        SemanticProperties.Description="Cerrar sesión">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCerrarSesion" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="🚪" FontSize="24" />
+                        <Label Text="Cerrar sesión" Style="{StaticResource TextoTile}" />
+                        <Label x:Name="LblRol" Style="{StaticResource TextoTileSuave}" />
+                    </VerticalStackLayout>
+                </Border>
+            </controles:MosaicoLayout>
+
+            <!-- Autores destacados: BindableLayout sobre HorizontalStackLayout -->
+            <Label Text="Autores destacados" Style="{StaticResource Seccion}" />
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout x:Name="ListaAutores" Spacing="14">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="modelos:AutorResumen">
+                            <VerticalStackLayout WidthRequest="88" Spacing="6">
+                                <Border WidthRequest="60" HeightRequest="60"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 30"
+                                        BackgroundColor="{Binding Color}"
+                                        HorizontalOptions="Center">
+                                    <Label Text="{Binding Iniciales}" TextColor="White"
+                                           FontSize="20" FontAttributes="Bold"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <Label Text="{Binding Autor}" FontSize="12" FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"
+                                       MaxLines="2" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding LibrosTexto}" Style="{StaticResource Subtitulo}"
+                                       FontSize="11" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- Libros recientes: BindableLayout sobre VerticalStackLayout -->
+            <Label Text="Agregados recientemente" Style="{StaticResource Seccion}" />
+            <VerticalStackLayout x:Name="ListaRecientes" Spacing="10">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="modelos:Libro">
+                        <Border Style="{StaticResource Card}" Padding="12">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border WidthRequest="44" HeightRequest="58"
+                                        StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                        BackgroundColor="{Binding ColorPortada}">
+                                    <Label Text="{Binding Iniciales}" TextColor="White" FontAttributes="Bold"
+                                           HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding Titulo}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Detalle}" Style="{StaticResource Subtitulo}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2" Style="{StaticResource Insignia}"
+                                        BackgroundColor="{Binding ColorEstado}" VerticalOptions="Center">
+                                    <Label Text="{Binding EstadoTexto}" Style="{StaticResource TextoInsignia}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
